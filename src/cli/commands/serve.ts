@@ -2,6 +2,10 @@ import chalk from 'chalk';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs-extra';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export async function serveComponents(options: { port: string }) {
   console.log(chalk.blue.bold('🚀 Starting Pagelume Component Server\n'));
@@ -32,23 +36,12 @@ export async function serveComponents(options: { port: string }) {
     console.log(chalk.cyan(`\nView your components at: http://localhost:${options.port}\n`));
     
     // Start Vite server
-    const viteConfig = path.resolve(process.cwd(), 'vite.component.config.js');
-    const hasCustomConfig = await fs.pathExists(viteConfig);
-    
     const viteArgs = [
       'vite',
       '--port',
       options.port,
       '--open'
     ];
-    
-    if (hasCustomConfig) {
-      viteArgs.push('--config', viteConfig);
-    } else {
-      // Use the SDK's vite config
-      const sdkConfig = path.resolve(__dirname, '../../../vite.component.config.js');
-      viteArgs.push('--config', sdkConfig);
-    }
     
     const vite = spawn('npx', viteArgs, {
       stdio: 'inherit',
@@ -80,7 +73,6 @@ async function createIndexHtml() {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pagelume Component Gallery</title>
-  <link rel="stylesheet" href="/node_modules/@pagelume/component-sdk/global-assets/scss/pagelume-global.scss">
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -149,11 +141,10 @@ async function createIndexHtml() {
     .component-link:hover {
       background: #0056b3;
     }
-    .component-link.secondary {
-      background: #6c757d;
-    }
-    .component-link.secondary:hover {
-      background: #545b62;
+    .no-components {
+      text-align: center;
+      color: #666;
+      padding: 40px;
     }
   </style>
 </head>
@@ -163,39 +154,16 @@ async function createIndexHtml() {
     <p>Browse and preview your components</p>
   </div>
   <div id="component-list" class="component-grid">
-    <!-- Components will be loaded here -->
+    <div class="no-components">
+      <h2>Welcome to Pagelume!</h2>
+      <p>No components found yet. Run <code>npm run create</code> to create your first component.</p>
+      <p>Once you have components, they will appear here for preview.</p>
+    </div>
   </div>
   
-  <script src="/node_modules/@pagelume/component-sdk/global-assets/js/pagelume-core.js"></script>
-  <script>
-    // Load component list
-    fetch('/api/components')
-      .then(res => res.json())
-      .then(components => {
-        const container = document.getElementById('component-list');
-        if (components.length === 0) {
-          container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No components found. Run "pagelume create" to create your first component.</p>';
-          return;
-        }
-        
-        components.forEach(component => {
-          const card = document.createElement('div');
-          card.className = 'component-card';
-          card.innerHTML = \`
-            <div class="component-type">\${component.type}</div>
-            <div class="component-name">\${component.name}</div>
-            <div class="component-description">\${component.description || 'No description'}</div>
-            <div class="component-actions">
-              <a href="/preview/\${component.type}/\${component.variation}" class="component-link">Preview</a>
-              <a href="/preview/\${component.type}/\${component.variation}?edit=true" class="component-link secondary">Edit Data</a>
-            </div>
-          \`;
-          container.appendChild(card);
-        });
-      })
-      .catch(err => {
-        console.error('Failed to load components:', err);
-      });
+  <script type="module">
+    // Component loading will be handled by Vite and the component system
+    console.log('Pagelume Component Gallery loaded');
   </script>
 </body>
 </html>`;

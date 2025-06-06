@@ -1,6 +1,6 @@
 {
   "name": "@pagelume/component-sdk",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Official SDK for building Pagelume components",
   "type": "module",
   "main": "dist/index.js",
@@ -11,8 +11,9 @@
   },
   "files": [
     "dist",
+    "global-assets",
     "templates",
-    "global-assets"
+    "README.md"
   ],
   "scripts": {
     "dev": "vite",
@@ -22,7 +23,7 @@
     "preview": "vite preview",
     "component:new": "pagelume-cli create",
     "component:list": "pagelume-cli list",
-    "component:serve": "vite --config vite.component.config.js"
+    "component:serve": "vite"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
@@ -37,15 +38,15 @@
     "jquery": "^3.7.1",
     "sass": "^1.75.0",
     "slick-carousel": "^1.8.1",
-    "vite": "^5.2.10"
+    "vite": "^5.2.10",
+    "vite-plugin-handlebars": "^2.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.12.7",
-    "typescript": "^5.4.5",
-    "vite-plugin-handlebars": "^2.0.0"
+    "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "vite": "^5.0.0"

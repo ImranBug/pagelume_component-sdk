@@ -63,12 +63,12 @@ export async function initProject() {
       author: answers.author,
       type: 'module',
       scripts: {
-        'dev': 'pagelume serve',
-        'create': 'pagelume create',
-        'list': 'pagelume list'
+        'dev': 'pagelume-cli serve',
+        'create': 'pagelume-cli create',
+        'list': 'pagelume-cli list'
       },
       devDependencies: {
-        '@pagelume/component-sdk': '^1.0.0'
+        '@pagelume/component-sdk': '^1.0.3'
       }
     };
     
@@ -76,7 +76,6 @@ export async function initProject() {
     
     // Create directory structure
     await fs.ensureDir('components');
-    await fs.ensureDir('assets/global');
     
     // Copy template files
     const templatesDir = path.resolve(__dirname, '../../../templates');
@@ -91,6 +90,83 @@ dist/
 .idea/`;
     
     await fs.writeFile('.gitignore', gitignoreContent);
+    
+    // Create vite.config.js
+    const viteConfigContent = `import { defineConfig } from 'vite';
+import handlebars from 'vite-plugin-handlebars';
+import { resolve } from 'path';
+import { readdirSync, readFileSync } from 'fs';
+
+// Function to scan for components
+function getComponents() {
+  const componentsDir = resolve(process.cwd(), 'components');
+  const components = [];
+  
+  try {
+    const componentTypes = readdirSync(componentsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+    
+    componentTypes.forEach(type => {
+      const typeDir = resolve(componentsDir, type);
+      const variations = readdirSync(typeDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+      
+      variations.forEach(variation => {
+        const componentPath = resolve(typeDir, variation);
+        const metaPath = resolve(componentPath, 'meta.json');
+        
+        try {
+          const meta = JSON.parse(readFileSync(metaPath, 'utf-8'));
+          components.push({
+            type,
+            variation,
+            path: componentPath,
+            meta
+          });
+        } catch (e) {
+          console.warn(\`Failed to load meta.json for \${type}/\${variation}\`);
+        }
+      });
+    });
+  } catch (e) {
+    // Components directory might be empty on first run
+  }
+  
+  return components;
+}
+
+export default defineConfig({
+  plugins: [
+    handlebars({
+      partialDirectory: resolve(process.cwd(), 'components'),
+      context: {
+        title: 'Pagelume Component Preview',
+        components: getComponents()
+      }
+    })
+  ],
+  resolve: {
+    alias: {
+      '@pagelume/sdk': '@pagelume/component-sdk',
+      '@global': resolve(process.cwd(), 'node_modules/@pagelume/component-sdk/global-assets')
+    }
+  },
+  server: {
+    port: 3000,
+    open: true
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: \`@import "@global/scss/variables";\`
+      }
+    }
+  }
+});`;
+    
+    await fs.writeFile('vite.config.js', viteConfigContent);
     
     // Create README.md
     const readmeContent = `# ${answers.projectName}

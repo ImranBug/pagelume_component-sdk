@@ -10,4 +10,4 @@ export { VitePlugin } from './core/VitePlugin.js';
 export * from './utils/index.js';
 
 // Re-export types
-export type { Component, ComponentMeta, ComponentField } from './types/index.js'; 
+export type { Component, ComponentMeta, ComponentField } from './types/index.js';
