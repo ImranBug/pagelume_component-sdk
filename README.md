@@ -22,7 +22,7 @@ npm install @pagelume/component-sdk
 ### 1. Initialize a New Project
 
 ```bash
-npx pagelume init
+npx @pagelume/component-sdk init
 cd my-components
 npm install
 ```
@@ -30,7 +30,7 @@ npm install
 ### 2. Create a Component
 
 ```bash
-npx pagelume create
+npx @pagelume/component-sdk create
 ```
 
 Follow the prompts to create your component.
@@ -38,7 +38,7 @@ Follow the prompts to create your component.
 ### 3. Start Development Server
 
 ```bash
-npx pagelume serve
+npx @pagelume/component-sdk serve
 ```
 
 Visit `http://localhost:3000` to see your components.
@@ -163,22 +163,31 @@ The SDK provides numerous custom Handlebars helpers:
 
 ### Initialize Project
 ```bash
-pagelume init
+npx @pagelume/component-sdk init
 ```
 
 ### Create Component
 ```bash
-pagelume create
+npx @pagelume/component-sdk create
 ```
 
 ### List Components
 ```bash
-pagelume list
+npx @pagelume/component-sdk list
 ```
 
 ### Serve Components
 ```bash
-pagelume serve [--port 3000]
+npx @pagelume/component-sdk serve [--port 3000]
+```
+
+If you have the package installed locally, you can also use the shorter `pagelume-cli` command:
+```bash
+npm install @pagelume/component-sdk
+pagelume-cli init
+pagelume-cli create
+pagelume-cli list
+pagelume-cli serve
 ```
 
 ## API Usage

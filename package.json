@@ -1,13 +1,13 @@
 {
   "name": "@pagelume/component-sdk",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Official SDK for building Pagelume components",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "pagelume": "./dist/cli/index.js"
+    "pagelume-cli": "./dist/cli/index.js"
   },
   "files": [
     "dist",
@@ -20,8 +20,8 @@
     "build:cli": "tsc -p tsconfig.cli.json",
     "prepublishOnly": "npm run build && npm run build:cli",
     "preview": "vite preview",
-    "component:new": "node dist/cli/index.js create",
-    "component:list": "node dist/cli/index.js list",
+    "component:new": "pagelume-cli create",
+    "component:list": "pagelume-cli list",
     "component:serve": "vite --config vite.component.config.js"
   },
   "dependencies": {
