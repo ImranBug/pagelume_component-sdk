@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagelume Component SDK - Development</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    
+    .header {
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #007bff;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .feature {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .feature h3 {
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+    
+    .feature p {
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .cta {
+      text-align: center;
+      margin-top: 3rem;
+    }
+    
+    .button {
+      display: inline-block;
+      padding: 12px 32px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    
+    .button:hover {
+      background: #0056b3;
+    }
+    
+    .code-block {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h2>Pagelume Component SDK</h2>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Welcome to Pagelume Component SDK</h1>
+      <p>Build modular, reusable web components with ease</p>
+      
+      <div class="cta">
+        <a href="/components" class="button">View Component Gallery</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h3>🎨 Component Templates</h3>
+        <p>Pre-built templates for common component types like headers, heroes, pricing tables, and more.</p>
+      </div>
+      
+      <div class="feature">
+        <h3>🎯 Handlebars Support</h3>
+        <p>Full Handlebars templating with custom helpers for dynamic content rendering.</p>
+      </div>
+      
+      <div class="feature">
+        <h3>💅 Global Styles</h3>
+        <p>SCSS variables, mixins, and utility classes for consistent styling across all components.</p>
+      </div>
+      
+      <div class="feature">
+        <h3>📦 Vendor Scripts</h3>
+        <p>Easy integration with popular libraries like jQuery, Bootstrap, GSAP, and more.</p>
+      </div>
+      
+      <div class="feature">
+        <h3>⚡ Hot Reload</h3>
+        <p>Instant preview updates as you develop your components with Vite's HMR.</p>
+      </div>
+      
+      <div class="feature">
+        <h3>🔧 CLI Tools</h3>
+        <p>Command-line tools for creating, listing, and serving components.</p>
+      </div>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>Quick Start</h2>
+      
+      <div class="code-block">
+        # Install the SDK<br>
+        npm install @pagelume/component-sdk<br><br>
+        
+        # Initialize a new project<br>
+        npx pagelume init<br><br>
+        
+        # Create a new component<br>
+        npx pagelume create<br><br>
+        
+        # Start development server<br>
+        npx pagelume serve
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    // This will be handled by Vite
+    console.log('Pagelume Component SDK loaded');
+  </script>
+</body>
+</html> 

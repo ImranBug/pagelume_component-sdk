@@ -1,0 +1,147 @@
+// Pagelume Global Variables
+// These variables are available to all components
+
+// ===================
+// Colors
+// ===================
+
+// Brand Colors
+$primary: #007bff !default;
+$secondary: #6c757d !default;
+$success: #28a745 !default;
+$info: #17a2b8 !default;
+$warning: #ffc107 !default;
+$danger: #dc3545 !default;
+$light: #f8f9fa !default;
+$dark: #343a40 !default;
+
+// Grayscale
+$white: #ffffff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000000 !default;
+
+// ===================
+// Typography
+// ===================
+
+// Font Families
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base: $font-family-sans-serif !default;
+
+// Font Sizes
+$font-size-base: 1rem !default; // 16px
+$font-size-xs: $font-size-base * 0.75 !default; // 12px
+$font-size-sm: $font-size-base * 0.875 !default; // 14px
+$font-size-lg: $font-size-base * 1.25 !default; // 20px
+$font-size-xl: $font-size-base * 1.5 !default; // 24px
+
+// Headings
+$h1-font-size: $font-size-base * 2.5 !default; // 40px
+$h2-font-size: $font-size-base * 2 !default; // 32px
+$h3-font-size: $font-size-base * 1.75 !default; // 28px
+$h4-font-size: $font-size-base * 1.5 !default; // 24px
+$h5-font-size: $font-size-base * 1.25 !default; // 20px
+$h6-font-size: $font-size-base !default; // 16px
+
+// Font Weights
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;
+
+// Line Heights
+$line-height-base: 1.5 !default;
+$line-height-sm: 1.25 !default;
+$line-height-lg: 2 !default;
+
+// ===================
+// Spacing
+// ===================
+
+$spacer: 1rem !default;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,  // 4px
+  2: $spacer * 0.5,   // 8px
+  3: $spacer,         // 16px
+  4: $spacer * 1.5,   // 24px
+  5: $spacer * 2,     // 32px
+  6: $spacer * 3,     // 48px
+  7: $spacer * 4,     // 64px
+  8: $spacer * 5,     // 80px
+) !default;
+
+// ===================
+// Breakpoints
+// ===================
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+) !default;
+
+// ===================
+// Container Max Widths
+// ===================
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px
+) !default;
+
+// ===================
+// Border
+// ===================
+
+$border-width: 1px !default;
+$border-color: $gray-300 !default;
+$border-radius: 0.375rem !default;
+$border-radius-sm: 0.25rem !default;
+$border-radius-lg: 0.5rem !default;
+$border-radius-xl: 1rem !default;
+$border-radius-pill: 50rem !default;
+
+// ===================
+// Shadows
+// ===================
+
+$box-shadow-sm: 0 0.125rem 0.25rem rgba($black, 0.075) !default;
+$box-shadow: 0 0.5rem 1rem rgba($black, 0.15) !default;
+$box-shadow-lg: 0 1rem 3rem rgba($black, 0.175) !default;
+
+// ===================
+// Z-index
+// ===================
+
+$zindex-dropdown: 1000 !default;
+$zindex-sticky: 1020 !default;
+$zindex-fixed: 1030 !default;
+$zindex-modal-backdrop: 1040 !default;
+$zindex-modal: 1050 !default;
+$zindex-popover: 1060 !default;
+$zindex-tooltip: 1070 !default;
+
+// ===================
+// Transitions
+// ===================
+
+$transition-base: all 0.2s ease-in-out !default;
+$transition-fade: opacity 0.15s linear !default;
+$transition-collapse: height 0.35s ease !default; 
