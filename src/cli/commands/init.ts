@@ -95,12 +95,16 @@ dist/
     const viteConfigContent = `import { defineConfig } from 'vite';
 import handlebars from 'vite-plugin-handlebars';
 import { resolve } from 'path';
-import { readdirSync, readFileSync } from 'fs';
+import { readdirSync, readFileSync, existsSync } from 'fs';
 
 // Function to scan for components
 function getComponents() {
   const componentsDir = resolve(process.cwd(), 'components');
   const components = [];
+  
+  if (!existsSync(componentsDir)) {
+    return components;
+  }
   
   try {
     const componentTypes = readdirSync(componentsDir, { withFileTypes: true })
@@ -123,7 +127,8 @@ function getComponents() {
             type,
             variation,
             path: componentPath,
-            meta
+            meta,
+            id: \`\${type}-\${variation}\`
           });
         } catch (e) {
           console.warn(\`Failed to load meta.json for \${type}/\${variation}\`);
@@ -131,21 +136,86 @@ function getComponents() {
       });
     });
   } catch (e) {
-    // Components directory might be empty on first run
+    console.error('Error scanning components:', e);
   }
   
   return components;
+}
+
+// Custom plugin to serve component data and previews
+function pagelumeComponentPlugin() {
+  return {
+    name: 'pagelume-component-plugin',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        // API endpoint for component data
+        if (req.url === '/api/components') {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(getComponents()));
+          return;
+        }
+        
+        // Component preview pages
+        const previewMatch = req.url.match(/^\\/preview\\/([^/]+)\\/([^/?]+)/);
+        if (previewMatch) {
+          const [, type, variation] = previewMatch;
+          const components = getComponents();
+          const component = components.find(c => c.type === type && c.variation === variation);
+          
+          if (component) {
+            // Compile template on server side
+            const templatePath = resolve(process.cwd(), \`components/\${type}/\${variation}/index.html\`);
+            const templateContent = readFileSync(templatePath, 'utf-8');
+            
+            // Import handlebars server-side
+            const handlebars = await import('handlebars').then(m => m.default);
+            const compiledTemplate = handlebars.compile(templateContent);
+            
+            // Generate data from fields
+            const data = component.meta.fields.reduce((acc, field) => {
+              acc[field.name] = field.default || '';
+              return acc;
+            }, {});
+            
+            // Render the component
+            const renderedComponent = compiledTemplate(data);
+            
+            const previewHtml = \`<!DOCTYPE html>
+<html>
+<head>
+  <title>\${component.meta.name} - Preview</title>
+  <link rel="stylesheet" href="/components/\${type}/\${variation}/assets/css/styles.css">
+  <style>
+    body { margin: 0; padding: 20px; background: #f5f5f5; }
+    .preview-container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    \${renderedComponent}
+  </div>
+  <script src="/components/\${type}/\${variation}/assets/js/script.js"></script>
+</body>
+</html>\`;
+            res.setHeader('Content-Type', 'text/html');
+            res.end(previewHtml);
+            return;
+          }
+        }
+        
+        next();
+      });
+    }
+  };
 }
 
 export default defineConfig({
   plugins: [
     handlebars({
       partialDirectory: resolve(process.cwd(), 'components'),
-      context: {
-        title: 'Pagelume Component Preview',
-        components: getComponents()
-      }
-    })
+      reloadOnPartialChange: true
+    }),
+    pagelumeComponentPlugin()
   ],
   resolve: {
     alias: {
@@ -403,4 +473,4 @@ To use vendor scripts in your components, add the \`data-pagelume-vendors\` attr
     console.error(chalk.red('Error initializing project:'), error);
     process.exit(1);
   }
-} 
+}

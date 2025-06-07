@@ -240,7 +240,7 @@ To work on the SDK itself:
 
 ```bash
 # Clone the repository
-git clone https://github.com/pagelume/component-sdk.git
+git clone https://github.com/ImranBug/pagelume_component-sdk.git
 cd component-sdk
 
 # Install dependencies
@@ -259,4 +259,4 @@ MIT
 
 ## Support
 
-For issues and feature requests, please visit our [GitHub repository](https://github.com/pagelume/component-sdk). 
+For issues and feature requests, please visit our [GitHub repository](https://github.com/ImranBug/pagelume_component-sdk). 
