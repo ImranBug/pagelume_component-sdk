@@ -4,21 +4,41 @@ import fs from 'fs-extra';
 import path from 'path';
 
 const componentTypes = [
-  'header',
-  'hero',
-  'features',
-  'pricing',
-  'testimonial',
-  'footer',
-  'cta',
-  'gallery',
-  'team',
-  'contact',
-  'custom'
+  { name: '🎨 Custom Component', value: 'custom' },
+  { name: '📄 Header', value: 'header' },
+  { name: '🎯 Hero Section', value: 'hero' },
+  { name: '⭐ Features', value: 'features' },
+  { name: '💰 Pricing', value: 'pricing' },
+  { name: '💬 Testimonial', value: 'testimonial' },
+  { name: '📝 Footer', value: 'footer' },
+  { name: '🚀 Call to Action', value: 'cta' },
+  { name: '🖼️ Gallery', value: 'gallery' },
+  { name: '👥 Team', value: 'team' },
+  { name: '📞 Contact', value: 'contact' }
 ];
 
+// Convert any string to kebab-case for file/folder names
+function toKebabCase(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+}
+
+// Convert kebab-case to camelCase for JavaScript function names
+function toCamelCase(str: string): string {
+  return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+// Convert kebab-case to PascalCase for JavaScript function names
+function toPascalCase(str: string): string {
+  return str.replace(/(^|-)([a-z])/g, (match, dash, letter) => letter.toUpperCase());
+}
+
 export async function createComponent() {
-  console.log(chalk.blue.bold('🎨 Create a New Component'));
+  console.log(chalk.blue.bold('🎨 Create a New Component\n'));
   
   try {
     // Check if we're in a Pagelume project
@@ -29,75 +49,75 @@ export async function createComponent() {
       process.exit(1);
     }
     
-    // Gather component information
+    // Gather component information with improved UX
     const answers = await inquirer.prompt([
       {
         type: 'list',
         name: 'type',
-        message: 'Component type:',
-        choices: componentTypes
+        message: 'What type of component would you like to create?',
+        choices: componentTypes,
+        pageSize: 12
       },
       {
         type: 'input',
         name: 'customType',
-        message: 'Custom component type:',
+        message: 'Enter your custom component type:',
         when: (answers) => answers.type === 'custom',
         validate: (input) => {
           if (!input) return 'Component type is required';
-          if (!/^[a-z0-9-]+$/.test(input)) {
-            return 'Component type must be lowercase with hyphens only';
-          }
+          const kebabCase = toKebabCase(input);
+          if (!kebabCase) return 'Please enter a valid component type';
           return true;
-        }
+        },
+        filter: (input) => toKebabCase(input)
       },
       {
         type: 'input',
-        name: 'variation',
-        message: 'Component variation name (e.g., "simple-hero", "dark-header"):',
+        name: 'componentName',
+        message: 'What should we call this component?',
         validate: (input) => {
-          if (!input) return 'Variation name is required';
-          if (!/^[a-z0-9-]+$/.test(input)) {
-            return 'Variation name must be lowercase with hyphens only';
-          }
+          if (!input) return 'Component name is required';
+          const kebabCase = toKebabCase(input);
+          if (!kebabCase) return 'Please enter a valid component name';
           return true;
+        },
+        transformer: (input) => {
+          return chalk.gray(`(will create: ${toKebabCase(input)})`);
         }
-      },
-      {
-        type: 'input',
-        name: 'displayName',
-        message: 'Display name:',
-        validate: (input) => input ? true : 'Display name is required'
       },
       {
         type: 'input',
         name: 'description',
-        message: 'Description:',
+        message: 'Brief description (optional):',
         default: ''
       },
       {
         type: 'checkbox',
         name: 'vendors',
-        message: 'Select vendor scripts to include:',
+        message: 'Select any vendor scripts you need:',
         choices: [
           { name: 'jQuery', value: 'jquery' },
           { name: 'Bootstrap', value: 'bootstrap' },
           { name: 'Slick Carousel', value: 'slick' },
-          { name: 'GSAP', value: 'gsap' },
+          { name: 'GSAP Animation', value: 'gsap' },
           { name: 'GSAP ScrollTrigger', value: 'gsapScrollTrigger' },
           { name: 'AOS (Animate On Scroll)', value: 'aos' },
           { name: 'Swiper', value: 'swiper' },
-          { name: 'Isotope', value: 'isotope' },
+          { name: 'Isotope Layout', value: 'isotope' },
           { name: 'Lightbox2', value: 'lightbox2' }
-        ]
+        ],
+        pageSize: 10
       }
     ]);
     
     const componentType = answers.type === 'custom' ? answers.customType : answers.type;
-    const componentPath = path.join('components', componentType, answers.variation);
+    const variationName = toKebabCase(answers.componentName);
+    const displayName = answers.componentName;
+    const componentPath = path.join('components', componentType, variationName);
     
     // Check if component already exists
     if (await fs.pathExists(componentPath)) {
-      console.error(chalk.red(`Component ${componentType}/${answers.variation} already exists!`));
+      console.error(chalk.red(`\n❌ Component ${componentType}/${variationName} already exists!`));
       process.exit(1);
     }
     
@@ -111,10 +131,10 @@ export async function createComponent() {
     
     // Create meta.json
     const meta = {
-      name: answers.displayName,
+      name: displayName,
       type: componentType,
-      variation: answers.variation,
-      description: answers.description,
+      variation: variationName,
+      description: answers.description || `A ${componentType} component`,
       version: '1.0.0',
       vendors: answers.vendors,
       fields: [
@@ -130,7 +150,7 @@ export async function createComponent() {
     await fs.writeJSON(path.join(componentPath, 'meta.json'), meta, { spaces: 2 });
     
     // Create component template based on type
-    const template = getComponentTemplate(componentType, answers.variation, answers.vendors);
+    const template = getComponentTemplate(componentType, variationName, answers.vendors);
     await fs.writeFile(path.join(componentPath, 'index.html'), template.html);
     
     // Create SCSS file
@@ -140,13 +160,15 @@ export async function createComponent() {
     await fs.writeFile(path.join(componentPath, 'assets', 'js', 'script.js'), template.js);
     
     console.log(chalk.green.bold('\n✅ Component created successfully!'));
-    console.log(chalk.cyan(`\nComponent location: ${componentPath}`));
-    console.log(chalk.yellow('\nNext steps:'));
-    console.log('  1. Edit the component template in index.html');
-    console.log('  2. Add fields to meta.json for dynamic content');
-    console.log('  3. Style your component in assets/scss/styles.scss');
-    console.log('  4. Add interactivity in assets/js/script.js');
-    console.log(chalk.white('\nRun ') + chalk.yellow('npm run dev') + chalk.white(' to preview your component'));
+    console.log(chalk.cyan(`\n📍 Location: ${componentPath}`));
+    console.log(chalk.gray(`🔗 URL: /preview/${componentType}/${variationName}`));
+    
+    console.log(chalk.yellow('\n🚀 Next steps:'));
+    console.log(chalk.white('  1. ') + chalk.cyan('npm run dev') + chalk.white(' - Start development server'));
+    console.log(chalk.white('  2. Edit ') + chalk.gray('index.html') + chalk.white(' - Component template'));
+    console.log(chalk.white('  3. Edit ') + chalk.gray('meta.json') + chalk.white(' - Add dynamic fields'));
+    console.log(chalk.white('  4. Style ') + chalk.gray('assets/scss/styles.scss') + chalk.white(' - Component styles'));
+    console.log(chalk.white('  5. Code ') + chalk.gray('assets/js/script.js') + chalk.white(' - Component behavior'));
     
   } catch (error) {
     console.error(chalk.red('Error creating component:'), error);
@@ -419,7 +441,7 @@ function getComponentTemplate(type: string, variation: string, vendors: string[]
   'use strict';
   
   // Initialize ${type} component
-  function initialize${type.charAt(0).toUpperCase() + type.slice(1)}() {
+  function initialize${toPascalCase(variation)}${toPascalCase(type)}() {
     console.log('${variation} ${type} component initialized');
     
     // Add your initialization code here
@@ -429,13 +451,13 @@ function getComponentTemplate(type: string, variation: string, vendors: string[]
   
   // Wait for vendors to be loaded if any
   if (${vendors.length > 0}) {
-    window.addEventListener('pagelume:vendorsLoaded', initialize${type.charAt(0).toUpperCase() + type.slice(1)});
+    window.addEventListener('pagelume:vendorsLoaded', initialize${toPascalCase(variation)}${toPascalCase(type)});
   } else {
     // No vendors needed, initialize immediately
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initialize${type.charAt(0).toUpperCase() + type.slice(1)});
+      document.addEventListener('DOMContentLoaded', initialize${toPascalCase(variation)}${toPascalCase(type)});
     } else {
-      initialize${type.charAt(0).toUpperCase() + type.slice(1)}();
+      initialize${toPascalCase(variation)}${toPascalCase(type)}();
     }
   }
 })();`

@@ -7,6 +7,17 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Function to get the project name from package.json
+async function getProjectName(): Promise<string> {
+  try {
+    const packagePath = path.resolve(process.cwd(), 'package.json');
+    const packageJson = await fs.readJSON(packagePath);
+    return packageJson.name || 'Pagelume Component Gallery';
+  } catch (error) {
+    return 'Pagelume Component Gallery';
+  }
+}
+
 export async function serveComponents(options: { port: string }) {
   console.log(chalk.blue.bold('🚀 Starting Pagelume Component Server\n'));
   
@@ -67,12 +78,13 @@ export async function serveComponents(options: { port: string }) {
 }
 
 async function createIndexHtml() {
+  const projectName = await getProjectName();
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pagelume Component Gallery</title>
+  <title>${projectName}</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -271,7 +283,7 @@ async function createIndexHtml() {
 </head>
 <body>
   <div class="gallery-header">
-    <h1>Pagelume Component Gallery</h1>
+    <h1>${projectName}</h1>
     <div class="controls">
       <input type="text" class="search-box" placeholder="Search components..." id="searchBox">
       <div class="filter-group">

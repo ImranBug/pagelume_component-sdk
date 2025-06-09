@@ -24,16 +24,51 @@ export async function initProject() {
   console.log(chalk.blue.bold('🚀 Initializing a new Pagelume Component Project'));
   
   try {
-    // Check if current directory is empty
+    // Check for potentially conflicting files
     const files = await fs.readdir(process.cwd());
-    const hasFiles = files.some(file => !file.startsWith('.'));
     
-    if (hasFiles) {
+    // Files that are safe to ignore during init
+    const safeFiles = new Set([
+      'node_modules',
+      'package.json',
+      'package-lock.json',
+      'yarn.lock',
+      'pnpm-lock.yaml',
+      '.git',
+      '.gitignore',
+      '.DS_Store',
+      '.vscode',
+      '.idea',
+      'README.md',
+      'readme.md',
+      'LICENSE',
+      'license'
+    ]);
+    
+    // Check for files that might conflict with Pagelume structure
+    const conflictingFiles = files.filter(file => {
+      // Ignore hidden files and safe files
+      if (file.startsWith('.') || safeFiles.has(file)) {
+        return false;
+      }
+      return true;
+    });
+    
+    // Only warn about specific conflicting files/folders
+    const pagelumeFolders = ['components', 'vite.config.js', 'index.html'];
+    const hasPagelumeConflicts = conflictingFiles.some(file => pagelumeFolders.includes(file));
+    
+    if (hasPagelumeConflicts) {
+      console.log(chalk.yellow('\n⚠️  Some Pagelume files already exist:'));
+      conflictingFiles
+        .filter(file => pagelumeFolders.includes(file))
+        .forEach(file => console.log(chalk.yellow(`  - ${file}`)));
+      
       const { proceed } = await inquirer.prompt([
         {
           type: 'confirm',
           name: 'proceed',
-          message: 'Current directory is not empty. Continue?',
+          message: 'These files may be overwritten. Continue?',
           default: false
         }
       ]);
@@ -42,6 +77,9 @@ export async function initProject() {
         console.log(chalk.yellow('Initialization cancelled.'));
         return;
       }
+    } else if (conflictingFiles.length > 0) {
+      // Just inform about other files but don't block
+      console.log(chalk.blue(`\nℹ️  Found ${conflictingFiles.length} existing file(s). Pagelume files will be added alongside them.`));
     }
     
     // Get project information
