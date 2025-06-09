@@ -7,6 +7,19 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Function to get the current SDK version
+async function getCurrentSDKVersion(): Promise<string> {
+  try {
+    // Get the package.json path from the SDK installation
+    const sdkPackagePath = path.resolve(__dirname, '../../../package.json');
+    const packageJson = await fs.readJSON(sdkPackagePath);
+    return `^${packageJson.version}`;
+  } catch (error) {
+    console.warn(chalk.yellow('Warning: Could not read SDK version, using fallback'));
+    return '^1.2.3'; // Fallback version
+  }
+}
+
 export async function initProject() {
   console.log(chalk.blue.bold('🚀 Initializing a new Pagelume Component Project'));
   
@@ -55,6 +68,9 @@ export async function initProject() {
     
     console.log(chalk.blue('\n📦 Setting up project structure...'));
     
+    // Get the current SDK version dynamically
+    const currentSDKVersion = await getCurrentSDKVersion();
+    
     // Create package.json
     const packageJson = {
       name: answers.projectName,
@@ -68,7 +84,7 @@ export async function initProject() {
         'list': 'pagelume-cli list'
       },
       devDependencies: {
-        '@pagelume/component-sdk': '^1.0.3'
+        '@pagelume/component-sdk': currentSDKVersion
       }
     };
     
