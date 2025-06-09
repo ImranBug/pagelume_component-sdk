@@ -183,6 +183,7 @@ function pagelumeComponentPlugin() {
             const previewHtml = \`<!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>\${component.meta.name} - Preview</title>
   <link rel="stylesheet" href="/components/\${type}/\${variation}/assets/css/styles.css">
   <style>

@@ -94,7 +94,7 @@ export function VitePlugin(options: VitePluginOptions = {}): Plugin {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>${component.meta.name} - Pagelume Component Preview</title>
   <link rel="stylesheet" href="/${globalAssetsDir}/scss/pagelume-global.scss">
   <style>
