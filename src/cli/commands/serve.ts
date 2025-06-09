@@ -135,10 +135,35 @@ async function createIndexHtml() {
       overflow: hidden;
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
+      position: relative;
     }
     .component-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .component-card:hover .new-tab-button {
+      opacity: 1;
+    }
+    .new-tab-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 20px;
+      line-height: 32px;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .new-tab-button:hover {
+      background: rgba(0,0,0,0.8);
     }
     .component-preview {
       height: 200px;
@@ -313,6 +338,7 @@ async function createIndexHtml() {
       
       container.innerHTML = filteredComponents.map(component => \`
         <div class="component-card" onclick="openModal('\${component.type}', '\${component.variation}', '\${component.meta.name}')">
+          <button class="new-tab-button" onclick="openInNewTab(event, '\${component.type}', '\${component.variation}')" title="Open in new tab">&#x2925;</button>
           <div class="component-preview">
             <iframe src="/preview/\${component.type}/\${component.variation}" loading="lazy"></iframe>
           </div>
@@ -354,6 +380,11 @@ async function createIndexHtml() {
       document.getElementById('modalTitle').textContent = name;
       document.getElementById('modalFrame').src = \`/preview/\${type}/\${variation}\`;
       document.getElementById('previewModal').classList.add('active');
+    }
+    
+    window.openInNewTab = function(event, type, variation) {
+      event.stopPropagation();
+      window.open(\`/preview/\${type}/\${variation}\`, '_blank');
     }
     
     window.closeModal = function() {

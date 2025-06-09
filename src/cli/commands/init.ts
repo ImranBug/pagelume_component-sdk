@@ -190,11 +190,35 @@ function pagelumeComponentPlugin() {
     body { margin: 0; padding: 20px; background: #f5f5f5; }
     .preview-container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
   </style>
+  \${component.meta.vendors?.map(v => 
+    \`<!-- Vendor: \${v} will be loaded by vendor-loader.js -->\`
+  ).join('\\n') || ''}
 </head>
 <body>
   <div class="preview-container">
     \${renderedComponent}
   </div>
+  
+  <script src="/node_modules/@pagelume/component-sdk/global-assets/js/pagelume-core.js"></script>
+  <script src="/node_modules/@pagelume/component-sdk/global-assets/js/vendor-loader.js"></script>
+  \${component.meta.vendors?.length ? \`
+  <script>
+    // Ensure vendors are loaded after everything is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.Pagelume && window.Pagelume.loadVendors) {
+        window.Pagelume.loadVendors(\${JSON.stringify(component.meta.vendors)}).then(function() {
+          console.log('All vendors loaded successfully');
+          // Trigger custom event to notify components that vendors are ready
+          window.dispatchEvent(new CustomEvent('pagelume:vendorsLoaded'));
+        }).catch(function(error) {
+          console.error('Failed to load vendors:', error);
+        });
+      } else {
+        console.error('Pagelume vendor loader not available');
+      }
+    });
+  </script>
+  \` : ''}
   <script src="/components/\${type}/\${variation}/assets/js/script.js"></script>
 </body>
 </html>\`;

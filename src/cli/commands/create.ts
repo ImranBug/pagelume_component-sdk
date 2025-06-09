@@ -247,18 +247,28 @@ function getComponentTemplate(type: string, variation: string, vendors: string[]
   'use strict';
   
   // Initialize header component
-  if (window.Pagelume && window.Pagelume.events) {
-    window.Pagelume.events.on('ready', function() {
-      const toggle = document.querySelector('.mobile-menu-toggle');
-      const menu = document.querySelector('.navbar-menu');
-      
-      if (toggle && menu) {
-        toggle.addEventListener('click', function() {
-          menu.classList.toggle('active');
-          toggle.classList.toggle('active');
-        });
-      }
-    });
+  function initializeHeader() {
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    const menu = document.querySelector('.navbar-menu');
+    
+    if (toggle && menu) {
+      toggle.addEventListener('click', function() {
+        menu.classList.toggle('active');
+        toggle.classList.toggle('active');
+      });
+    }
+  }
+  
+  // Wait for vendors to be loaded if any
+  if (${vendors.length > 0}) {
+    window.addEventListener('pagelume:vendorsLoaded', initializeHeader);
+  } else {
+    // No vendors needed, initialize immediately
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeHeader);
+    } else {
+      initializeHeader();
+    }
   }
 })();`
     },
@@ -363,10 +373,24 @@ function getComponentTemplate(type: string, variation: string, vendors: string[]
   'use strict';
   
   // Initialize hero component
-  if (window.Pagelume && window.Pagelume.events) {
-    window.Pagelume.events.on('ready', function() {
-      console.log('${variation} hero component initialized');
-    });
+  function initializeHero() {
+    console.log('${variation} hero component initialized');
+    
+    // Example: Add any initialization code here
+    // If using jQuery: $(document).ready(function() { ... });
+    // If using GSAP: gsap.from('.hero-title', { ... });
+  }
+  
+  // Wait for vendors to be loaded if any
+  if (${vendors.length > 0}) {
+    window.addEventListener('pagelume:vendorsLoaded', initializeHero);
+  } else {
+    // No vendors needed, initialize immediately
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeHero);
+    } else {
+      initializeHero();
+    }
   }
 })();`
     }
@@ -395,10 +419,24 @@ function getComponentTemplate(type: string, variation: string, vendors: string[]
   'use strict';
   
   // Initialize ${type} component
-  if (window.Pagelume && window.Pagelume.events) {
-    window.Pagelume.events.on('ready', function() {
-      console.log('${variation} ${type} component initialized');
-    });
+  function initialize${type.charAt(0).toUpperCase() + type.slice(1)}() {
+    console.log('${variation} ${type} component initialized');
+    
+    // Add your initialization code here
+    // If using jQuery: $(document).ready(function() { ... });
+    // If using other vendors, they will be available at this point
+  }
+  
+  // Wait for vendors to be loaded if any
+  if (${vendors.length > 0}) {
+    window.addEventListener('pagelume:vendorsLoaded', initialize${type.charAt(0).toUpperCase() + type.slice(1)});
+  } else {
+    // No vendors needed, initialize immediately
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize${type.charAt(0).toUpperCase() + type.slice(1)});
+    } else {
+      initialize${type.charAt(0).toUpperCase() + type.slice(1)}();
+    }
   }
 })();`
   };

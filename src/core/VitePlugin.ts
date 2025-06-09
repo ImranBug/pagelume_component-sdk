@@ -31,6 +31,34 @@ export function VitePlugin(options: VitePluginOptions = {}): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
+      // Add middleware for serving global assets
+      server.middlewares.use(async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
+        if (!req.url?.startsWith(`/${globalAssetsDir}/`)) {
+          return next();
+        }
+
+        try {
+          const filePath = path.resolve(process.cwd(), req.url.substring(1));
+          
+          if (await fs.pathExists(filePath)) {
+            const stat = await fs.stat(filePath);
+            if (stat.isFile()) {
+              const ext = path.extname(filePath);
+              const contentType = getContentType(ext);
+              
+              res.setHeader('Content-Type', contentType);
+              const fileContent = await fs.readFile(filePath);
+              res.end(fileContent);
+              return;
+            }
+          }
+        } catch (error) {
+          // Continue to next middleware if file not found or error
+        }
+        
+        next();
+      });
+
       // Add middleware for component API
       server.middlewares.use('/api/components', async (req: IncomingMessage, res: ServerResponse) => {
         try {
@@ -137,8 +165,20 @@ export function VitePlugin(options: VitePluginOptions = {}): Plugin {
   <script src="/${globalAssetsDir}/js/vendor-loader.js"></script>
   ${component.meta.vendors?.length ? `
   <script>
-    // Auto-load required vendors
-    Pagelume.loadVendors(${JSON.stringify(component.meta.vendors)});
+    // Ensure vendors are loaded after everything is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.Pagelume && window.Pagelume.loadVendors) {
+        window.Pagelume.loadVendors(${JSON.stringify(component.meta.vendors)}).then(function() {
+          console.log('All vendors loaded successfully');
+          // Trigger custom event to notify components that vendors are ready
+          window.dispatchEvent(new CustomEvent('pagelume:vendorsLoaded'));
+        }).catch(function(error) {
+          console.error('Failed to load vendors:', error);
+        });
+      } else {
+        console.error('Pagelume vendor loader not available');
+      }
+    });
   </script>
   ` : ''}
 </body>
@@ -201,4 +241,25 @@ function findComponentDir(file: string, componentsDir: string): string | null {
   }
   
   return null;
+}
+
+function getContentType(ext: string): string {
+  const mimeTypes: Record<string, string> = {
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.scss': 'text/css',
+    '.json': 'application/json',
+    '.html': 'text/html',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
+    '.eot': 'application/vnd.ms-fontobject'
+  };
+  
+  return mimeTypes[ext.toLowerCase()] || 'text/plain';
 } 
