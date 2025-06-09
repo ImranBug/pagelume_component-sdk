@@ -19,29 +19,40 @@ npm install @pagelume/component-sdk
 
 ## Quick Start
 
-### 1. Initialize a New Project
+### 1. Create Your Project
+
+Create a folder for your new component library, and then `cd` into it.
+
+```bash
+mkdir my-components
+cd my-components
+```
+
+### 2. Initialize the Project
+
+Run the `init` command inside your new folder. This will scaffold your project, creating a `package.json` and all necessary configuration files.
 
 ```bash
 npx @pagelume/component-sdk init
-cd my-components
+```
+
+### 3. Install Dependencies
+
+Install the required dependencies using `npm`.
+
+```bash
 npm install
 ```
 
-### 2. Create a Component
+### 4. Start the Development Server
+
+Start the Vite development server to see your components.
 
 ```bash
-npx @pagelume/component-sdk create
+npm run dev
 ```
 
-Follow the prompts to create your component.
-
-### 3. Start Development Server
-
-```bash
-npx @pagelume/component-sdk serve
-```
-
-Visit `http://localhost:3000` to see your components.
+Visit `http://localhost:3000` to see your component gallery.
 
 ## Component Structure
 
